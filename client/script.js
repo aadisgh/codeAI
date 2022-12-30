@@ -14,7 +14,7 @@ function loader(element) {
         element.textContent += '.';
 
         // If the loading indicator has reached three dots, reset it
-        if (element.textContent === '..........') {
+        if (element.textContent === '....') {
             element.textContent = '';
         }
     }, 300);
@@ -84,38 +84,37 @@ const handleSubmit = async (e) => {
     const messageDiv = document.getElementById(uniqueId)
 
     // messageDiv.innerHTML = "..."
- // messageDiv.innerHTML = "..."
- loader(messageDiv);
- const response = await fetch('http://localhost:5000',{
-   method: 'POST',
-   headers: {
-     'Content-type': 'application/json'
-   },
-   body: JSON.stringify({
-     prompt: data.get('prompt')
-   })
- })
+    loader(messageDiv)
 
-clearInterval(loadInterval);
-messageDiv.innerHTML = '';
+    const response = await fetch('https://chatai-jrys.onrender.com/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            prompt: data.get('prompt')
+        })
+    })
 
-if(response.ok) {
- const data = await response.json();
- const parsedData = data.bot.trim();
+    clearInterval(loadInterval)
+    messageDiv.innerHTML = " "
 
- typeText(messageDiv, parsedData);
-} else {
- const err = await response.text();
+    if (response.ok) {
+        const data = await response.json();
+        const parsedData = data.bot.trim() // trims any trailing spaces/'\n' 
 
- messageDiv.innerHTML = "Something went wrong";
+        typeText(messageDiv, parsedData)
+    } else {
+        const err = await response.text()
 
- alert(err);
-}
+        messageDiv.innerHTML = "Something went wrong"
+        alert(err)
+    }
 }
 
 form.addEventListener('submit', handleSubmit)
 form.addEventListener('keyup', (e) => {
-   if (e.keyCode === 13) {
-       handleSubmit(e)
-   }
+    if (e.keyCode === 13) {
+        handleSubmit(e)
+    }
 })
